@@ -383,6 +383,7 @@ public class AdbConfigService extends Service {
 
             if (port == -1) {
                 Log.e(TAG, "Could not find ADB port");
+                restartWirelessDebugging();
                 updateStatus("Failed - port not found");
                 updateNotification("Failed - port not found");
                 return false;
@@ -433,6 +434,13 @@ public class AdbConfigService extends Service {
             updateNotification("Failed - error");
             return false;
         }
+    }
+
+    private void restartWirelessDebugging() throws InterruptedException {
+        Log.i(TAG, "Restarting wireless debugging so it starts on the current network");
+        Settings.Global.putInt(getContentResolver(), "adb_wifi_enabled", 0);
+        Thread.sleep(2000);
+        Settings.Global.putInt(getContentResolver(), "adb_wifi_enabled", 1);
     }
 
     @SuppressWarnings("deprecation")
